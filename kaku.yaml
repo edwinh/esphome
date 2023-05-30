@@ -64,6 +64,21 @@ remote_transmitter:
 #     id: ${name}_uptime
 #     name: "${friendly_name} uptime"
 
+globals:
+  - id: telegrams_array
+    type: std::vector<std::vector<int>>
+    initial_value: '{{375, -1125, 375, -1125}, {}, {375, -1125, 1125, -375}}'
+  - id: end_sequence
+    type: std::vector<int>
+    initial_value: '{375, -11625}'
+  - id: kaku_d3_on_code
+    type: std::vector<int>
+    initial_value: '{2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 2, 2}'
+  - id: kaku_d3_off_code
+    type: std::vector<int>
+    initial_value: '{2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 2, 0}'
+
+
 switch:
   - platform: template
     id: kaku_test

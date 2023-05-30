@@ -1,5 +1,4 @@
 #include <vector>
-#include <iostream>
 
 /* Module to determine bit sequence for KlikAanKlikUit 
 

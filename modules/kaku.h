@@ -1,5 +1,8 @@
 #include <vector>
 
+/* Module to determine bit sequence for KlikAanKlikUit 
+
+*/
 namespace constants {
   const std::vector<std::vector<int>> TELEGRAMS_ARRAY   = {{375, -1125, 375, -1125}, {}, {375, -1125, 1125, -375}};
   const std::vector<int>              END_SEQUENCE      = {375, -11625};

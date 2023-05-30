@@ -64,21 +64,6 @@ remote_transmitter:
 #     id: ${name}_uptime
 #     name: "${friendly_name} uptime"
 
-globals:
-  - id: telegrams_array
-    type: std::vector<std::vector<int>>
-    initial_value: '{{375, -1125, 375, -1125}, {}, {375, -1125, 1125, -375}}'
-  - id: end_sequence
-    type: std::vector<int>
-    initial_value: '{375, -11625}'
-  - id: kaku_d3_on_code
-    type: std::vector<int>
-    initial_value: '{2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 2, 2}'
-  - id: kaku_d3_off_code
-    type: std::vector<int>
-    initial_value: '{2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 2, 0}'
-
-
 switch:
   - platform: template
     id: kaku_test
@@ -94,15 +79,8 @@ switch:
     turn_off_action:
       - remote_transmitter.transmit_raw:
           code: !lambda |-
-            std::vector<int> kaku_sequence = id(kaku_d3_off_code);
-            std::vector<std::vector<int>> telegramsArray = id(telegrams_array);
-            std::vector<int> endSequence = id(end_sequence);
-            std::vector<int> result = {};
-            for (const auto& element : kaku_sequence) {
-              result.insert(result.end(), telegramsArray[element].begin(), telegramsArray[element].end());
-            }
-            result.insert(result.end(), endSequence.begin(), endSequence.end());
-            return result;
+            KlikAanKlikUitOld kaku;
+            return kaku.off('D', 1);
           repeat:
             times: 4
   - platform: template
@@ -110,58 +88,17 @@ switch:
     name: Kaku D1
     optimistic: true
     turn_on_action:
-      # 3*375 = 1125
       - remote_transmitter.transmit_raw:
-          # D1 ON
-          # [  2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2 ]
-          code: [
-            #2
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            #2
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-
-            # end: High, low for 11625
-            375, -11625
-          ]
+          code: !lambda |-
+            KlikAanKlikUitOld kaku;
+            return kaku.on('D', 1);
           repeat:
             times: 4
     turn_off_action:
-      # 3*375 = 1125
       - remote_transmitter.transmit_raw:
-          # D1 OFF
-          # [  2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0 ]
-          code: [
-            #2
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            #2
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-
-            # end, High, low for 11625
-            375, -11625
-          ]
+          code: !lambda |-
+            KlikAanKlikUitOld kaku;
+            return kaku.off('D', 1);
           repeat:
             times: 4
   - platform: template
@@ -169,62 +106,17 @@ switch:
     name: Kaku D2
     optimistic: true
     turn_on_action:
-      # 3*375 = 1125
       - remote_transmitter.transmit_raw:
-          # D2 ON
-          # [  2, 2, 0, 0, 2, 0, 0, 0, 0, 2, 2, 2 ]
-          code: [
-            #2
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            #2
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            #2
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-
-            # end, High, low for 11625
-            375, -11625
-          ]
+          code: !lambda |-
+            KlikAanKlikUitOld kaku;
+            return kaku.on('D', 2);
           repeat:
             times: 4
     turn_off_action:
-      # 3*375 = 1125
       - remote_transmitter.transmit_raw:
-          # D3 OFF
-          # [  2, 2, 0, 0, 2, 0, 0, 0, 0, 2, 2, 0 ]
-          code: [
-            #2
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            #2
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            #2
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-            
-            # end, High, low for 11625
-            375, -11625
-          ]
+          code: !lambda |-
+            KlikAanKlikUitOld kaku;
+            return kaku.off('D', 2);
           repeat:
             times: 4
   - platform: template
@@ -232,60 +124,16 @@ switch:
     name: Kaku D3
     optimistic: true
     turn_on_action:
-      # 3*375 = 1125
       - remote_transmitter.transmit_raw:
-          # D3 ON
-          # [  2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 2, 2 ]
-          code: [
-            #2
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            #2
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            #2
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-
-            # end, High, low for 11625
-            375, -11625
-          ]
+          code: !lambda |-
+            KlikAanKlikUitOld kaku;
+            return kaku.on('D', 3);
           repeat:
             times: 4
     turn_off_action:
-      # 3*375 = 1125
       - remote_transmitter.transmit_raw:
-          # D3 OFF
-          # [  2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 2, 0 ]
-          code: [
-            #2
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            #2
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            375, -1125, 375, -1125,
-            #2
-            375, -1125, 1125, -375,
-            375, -1125, 1125, -375,
-            #0
-            375, -1125, 375, -1125,
-            # end, High, low for 11625
-            375, -11625
-          ]
+          code: !lambda |-
+            KlikAanKlikUitOld kaku;
+            return kaku.off('D', 3);
           repeat:
             times: 4

@@ -72,17 +72,17 @@ switch:
     turn_on_action:
       - remote_transmitter.transmit_raw:
           code: !lambda |-
-            KlikAanKlikUitOld kaku;
-            return kaku.on('D', 1);
+            KlikAanKlikUitNew kaku(1013, 260);
+            return kaku.dim(2, 10);
           repeat:
-            times: 4
+            times: 7
     turn_off_action:
       - remote_transmitter.transmit_raw:
           code: !lambda |-
-            KlikAanKlikUitOld kaku;
-            return kaku.off('D', 1);
+            KlikAanKlikUitNew kaku(1013, 260);
+            return kaku.off(2);
           repeat:
-            times: 4
+            times: 7
   - platform: template
     id: kaku_D1
     name: Kaku D1

@@ -1,0 +1,290 @@
+substitutions:
+  name: kaku
+  friendly_name: "KlikAanKlikUit"
+
+esphome:
+  name: $name
+  includes: modules/kaku.h
+  
+esp32:
+  board: nodemcu-32s
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  # level: DEBUG
+
+# Enable Home Assistant API
+api:
+  password: ""
+
+ota:
+  password: ""
+
+web_server:
+  port: 80
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: true
+  reboot_timeout: 0s
+  power_save_mode: high
+  manual_ip:
+    static_ip: !secret ip_kaku
+    gateway: !secret ip_gateway
+    subnet: !secret ip_subnet
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "ESP_${name}"
+    password: !secret wifi_password
+
+# captive_portal:
+
+# remote_receiver:
+#   pin: GPIO33
+#   dump: 
+#     - rc_switch
+#   # Settings to optimize recognition of RF devices
+#   tolerance: 50%
+#   filter: 250us
+#   idle: 4ms
+#   buffer_size: 2kb
+
+remote_transmitter:
+  pin: GPIO32
+  # RF uses a 100% carrier signal
+  carrier_duty_percent: 100%
+
+# sensor:
+#   - platform: uptime
+#     internal: false
+#     id: ${name}_uptime
+#     name: "${friendly_name} uptime"
+
+globals:
+  - id: telegrams_array
+    type: std::vector<std::vector<int>>
+    initial_value: '{{375, -1125, 375, -1125}, {}, {375, -1125, 1125, -375}}'
+  - id: end_sequence
+    type: std::vector<int>
+    initial_value: '{375, -11625}'
+  - id: kaku_d3_on_code
+    type: std::vector<int>
+    initial_value: '{2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 2, 2}'
+  - id: kaku_d3_off_code
+    type: std::vector<int>
+    initial_value: '{2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 2, 0}'
+
+
+switch:
+  - platform: template
+    id: kaku_test
+    name: Kaku Test
+    optimistic: true
+    turn_on_action:
+      - remote_transmitter.transmit_raw:
+          code: !lambda |-
+            return kakuOldProtocol("D1", true);
+          repeat:
+            times: 4
+    turn_off_action:
+      - remote_transmitter.transmit_raw:
+          code: !lambda |-
+            std::vector<int> kaku_sequence = id(kaku_d3_off_code);
+            std::vector<std::vector<int>> telegramsArray = id(telegrams_array);
+            std::vector<int> endSequence = id(end_sequence);
+            std::vector<int> result = {};
+            for (const auto& element : kaku_sequence) {
+              result.insert(result.end(), telegramsArray[element].begin(), telegramsArray[element].end());
+            }
+            result.insert(result.end(), endSequence.begin(), endSequence.end());
+            return result;
+          repeat:
+            times: 4
+  - platform: template
+    id: kaku_D1
+    name: Kaku D1
+    optimistic: true
+    turn_on_action:
+      # 3*375 = 1125
+      - remote_transmitter.transmit_raw:
+          # D1 ON
+          # [  2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2 ]
+          code: [
+            #2
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            #2
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+
+            # end: High, low for 11625
+            375, -11625
+          ]
+          repeat:
+            times: 4
+    turn_off_action:
+      # 3*375 = 1125
+      - remote_transmitter.transmit_raw:
+          # D1 OFF
+          # [  2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0 ]
+          code: [
+            #2
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            #2
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+
+            # end, High, low for 11625
+            375, -11625
+          ]
+          repeat:
+            times: 4
+  - platform: template
+    id: kaku_D2
+    name: Kaku D2
+    optimistic: true
+    turn_on_action:
+      # 3*375 = 1125
+      - remote_transmitter.transmit_raw:
+          # D2 ON
+          # [  2, 2, 0, 0, 2, 0, 0, 0, 0, 2, 2, 2 ]
+          code: [
+            #2
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            #2
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            #2
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+
+            # end, High, low for 11625
+            375, -11625
+          ]
+          repeat:
+            times: 4
+    turn_off_action:
+      # 3*375 = 1125
+      - remote_transmitter.transmit_raw:
+          # D3 OFF
+          # [  2, 2, 0, 0, 2, 0, 0, 0, 0, 2, 2, 0 ]
+          code: [
+            #2
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            #2
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            #2
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+            
+            # end, High, low for 11625
+            375, -11625
+          ]
+          repeat:
+            times: 4
+  - platform: template
+    id: kaku_D3
+    name: Kaku D3
+    optimistic: true
+    turn_on_action:
+      # 3*375 = 1125
+      - remote_transmitter.transmit_raw:
+          # D3 ON
+          # [  2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 2, 2 ]
+          code: [
+            #2
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            #2
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            #2
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+
+            # end, High, low for 11625
+            375, -11625
+          ]
+          repeat:
+            times: 4
+    turn_off_action:
+      # 3*375 = 1125
+      - remote_transmitter.transmit_raw:
+          # D3 OFF
+          # [  2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 2, 0 ]
+          code: [
+            #2
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            #2
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            375, -1125, 375, -1125,
+            #2
+            375, -1125, 1125, -375,
+            375, -1125, 1125, -375,
+            #0
+            375, -1125, 375, -1125,
+            # end, High, low for 11625
+            375, -11625
+          ]
+          repeat:
+            times: 4

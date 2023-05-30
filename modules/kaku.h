@@ -35,22 +35,22 @@ class KlikAanKlikUitOld {
         int code = trits[i];
         switch (code) {
           case 0:
-            result.push_back( 1 * periodusec * 1);
-            result.push_back(-1 * periodusec * 3);
-            result.push_back( 1 * periodusec * 1);
-            result.push_back(-1 * periodusec * 3);
+            result.push_back( constants::KAKU_HIGH * periodusec * 1);
+            result.push_back( constants::KAKU_LOW * periodusec * 3);
+            result.push_back( constants::KAKU_HIGH * periodusec * 1);
+            result.push_back( constants::KAKU_LOW * periodusec * 3);
             break;
           case 1:
-            result.push_back( 1 * periodusec * 3);
-            result.push_back(-1 * periodusec * 1);
-            result.push_back( 1 * periodusec * 3);
-            result.push_back(-1 * periodusec * 1);
+            result.push_back( constants::KAKU_HIGH * periodusec * 3);
+            result.push_back( constants::KAKU_LOW * periodusec * 1);
+            result.push_back( constants::KAKU_HIGH * periodusec * 3);
+            result.push_back( constants::KAKU_LOW * periodusec * 1);
             break;
           case 2:
-            result.push_back( 1 * periodusec * 1);
-            result.push_back(-1 * periodusec * 3);
-            result.push_back( 1 * periodusec * 3);
-            result.push_back(-1 * periodusec * 1);
+            result.push_back( constants::KAKU_HIGH * periodusec * 1);
+            result.push_back( constants::KAKU_LOW * periodusec * 3);
+            result.push_back( constants::KAKU_HIGH * periodusec * 3);
+            result.push_back( constants::KAKU_LOW * periodusec * 1);
             break;
           }
         }

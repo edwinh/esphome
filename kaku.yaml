@@ -66,8 +66,8 @@ remote_transmitter:
 
 switch:
   - platform: template
-    id: kaku_test
-    name: Kaku Test
+    id: kaku_dinner
+    name: Kaku Dinner Table
     optimistic: true
     turn_on_action:
       - remote_transmitter.transmit_raw:

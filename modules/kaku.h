@@ -36,21 +36,21 @@ class KlikAanKlikUitOld {
         switch (code) {
           case 0:
             result.push_back( constants::KAKU_HIGH * periodusec * 1);
-            result.push_back( constants::KAKU_LOW * periodusec * 3);
+            result.push_back( constants::KAKU_LOW  * periodusec * 3);
             result.push_back( constants::KAKU_HIGH * periodusec * 1);
-            result.push_back( constants::KAKU_LOW * periodusec * 3);
+            result.push_back( constants::KAKU_LOW  * periodusec * 3);
             break;
           case 1:
             result.push_back( constants::KAKU_HIGH * periodusec * 3);
-            result.push_back( constants::KAKU_LOW * periodusec * 1);
+            result.push_back( constants::KAKU_LOW  * periodusec * 1);
             result.push_back( constants::KAKU_HIGH * periodusec * 3);
-            result.push_back( constants::KAKU_LOW * periodusec * 1);
+            result.push_back( constants::KAKU_LOW  * periodusec * 1);
             break;
           case 2:
             result.push_back( constants::KAKU_HIGH * periodusec * 1);
-            result.push_back( constants::KAKU_LOW * periodusec * 3);
+            result.push_back( constants::KAKU_LOW  * periodusec * 3);
             result.push_back( constants::KAKU_HIGH * periodusec * 3);
-            result.push_back( constants::KAKU_LOW * periodusec * 1);
+            result.push_back( constants::KAKU_LOW  * periodusec * 1);
             break;
           }
         }
@@ -77,17 +77,12 @@ class KlikAanKlikUitOld {
       trits[11] = on ? 2 : 0;
     }
 };
+
 class KlikAanKlikUitNew {
   private:
     int address;
     int periodusec;
 
-  public:
-    KlikAanKlikUitNew(int address, int periodusec = 260) {
-        this->periodusec = periodusec;
-        this->address = address;
-    }
-    
     std::vector<int> getBit(bool isBitOne) {
       std::vector<int> result = {};
       if (isBitOne) {
@@ -139,14 +134,6 @@ class KlikAanKlikUitNew {
       }
       return result;
     }
-    std::vector<int> on(int unit) {
-      return switchUnit(unit, true);
-    }
-    std::vector<int> off(int unit) {
-      return switchUnit(unit, false);
-    }
-
-
 
     std::vector<int> switchUnit(int unit, bool switchOn) {
       std::vector<int> result = {};
@@ -158,14 +145,28 @@ class KlikAanKlikUitNew {
       std::vector<int> stopPulse = getStopPulse();
       
       // Build result sequence
-      result.insert(std::end(result), std::begin(startPulse), std::end(startPulse));
-      result.insert(std::end(result), std::begin(addressSequence), std::end(addressSequence));
-      result.insert(std::end(result), std::begin(falseBit), std::end(falseBit));
-      result.insert(std::end(result), std::begin(switchBit), std::end(switchBit));
-      result.insert(std::end(result), std::begin(unitSequence), std::end(unitSequence));
-      result.insert(std::end(result), std::begin(stopPulse), std::end(stopPulse));
+      result.insert(std::end(result), std::begin(startPulse),       std::end(startPulse));
+      result.insert(std::end(result), std::begin(addressSequence),  std::end(addressSequence));
+      result.insert(std::end(result), std::begin(falseBit),         std::end(falseBit));
+      result.insert(std::end(result), std::begin(switchBit),        std::end(switchBit));
+      result.insert(std::end(result), std::begin(unitSequence),     std::end(unitSequence));
+      result.insert(std::end(result), std::begin(stopPulse),        std::end(stopPulse));
       return result;
     }
+
+  public:
+    KlikAanKlikUitNew(int address, int periodusec = 260) {
+        this->periodusec = periodusec;
+        this->address = address;
+    }
+ 
+    std::vector<int> on(int unit) {
+      return switchUnit(unit, true);
+    }
+    std::vector<int> off(int unit) {
+      return switchUnit(unit, false);
+    }
+    
     std::vector<int> dim(int unit, int dimLevel) {
       // dimLevel can be 0 to 15
       std::vector<int> result = {};

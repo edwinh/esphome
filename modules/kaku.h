@@ -1,4 +1,7 @@
 #include <vector>
+#include <esphome.h>
+
+//using namespace esphome;
 
 /* Module to determine bit sequence for KlikAanKlikUit 
 
@@ -6,6 +9,7 @@
 namespace constants {
   const int KAKU_LOW = -1;
   const int KAKU_HIGH = 1;
+  const int PULSE_WIDTH = 375;
 }
 
 class KlikAanKlikUitOld {
@@ -13,7 +17,7 @@ class KlikAanKlikUitOld {
     int periodusec;
       
   public:
-    KlikAanKlikUitOld(int periodusec = 375) {
+    KlikAanKlikUitOld(int periodusec = constants::PULSE_WIDTH) {
         this->periodusec = periodusec;
     }
         
@@ -78,10 +82,12 @@ class KlikAanKlikUitOld {
     }
 };
 
-class KlikAanKlikUitNew {
+class KlikAanKlikUitNew : public Component, public LightOutput {
   private:
     int address;
     int periodusec;
+    // Pin D1 = GPIO5 on the Wemos D1 mini
+    int outPin = 5;
 
     std::vector<int> getBit(bool isBitOne) {
       std::vector<int> result = {};
@@ -196,5 +202,55 @@ class KlikAanKlikUitNew {
       result.insert(std::end(result), std::begin(dimlevelSequence), std::end(dimlevelSequence));
       result.insert(std::end(result), std::begin(stopPulse), std::end(stopPulse));
       return result;
+    }
+
+  public:
+    void setup() override {
+      // This will be called by App.setup()
+      
+      pinMode(outPin, OUTPUT);
+      ESP_LOGD("custom", "Output pin set");
+
+    }
+
+    LightTraits get_traits() override {
+      // return the traits this light supports
+      auto traits = LightTraits();
+      traits.set_supported_color_modes({ColorMode::BRIGHTNESS});
+      return traits;
+    }
+
+    void write_state(LightState *state) override {
+      // This will be called by the light to get a new state to be written.
+      //float red, green, blue;
+      // use any of the provided current_values methods
+      //state->current_values_as_rgb(&red, &green, &blue);
+      // Write red, green and blue to HW
+  
+      float brightness = state->current_values.get_brightness();
+      ESP_LOGD("custom", "get_brightness=%.2f", brightness);
+      ESP_LOGD("custom", "is_on=%d", state->current_values.is_on());
+      std::vector<int> sequence;
+      if (state->current_values.is_on()) {
+        int dimlevel = brightness * 15;
+
+        // if dimlevel results in 0, set to 1
+        dimlevel = dimlevel ? dimlevel : 1;
+        ESP_LOGD("custom", "dimlevel=%d", dimlevel);
+        sequence = dim(2,dimlevel);
+        ESP_LOGD("custom", "Light turned on");
+      } else {
+        sequence = off(2);
+        ESP_LOGD("custom", "Light turned off ");
+      }
+      // Write sequence 
+      for (int j=0; j < 4; j++) {
+        for (int i=0; i < sequence.size(); i++) {
+          bool isHighPulse = sequence[i] >= 0;
+          digitalWrite(outPin, isHighPulse);
+          delayMicroseconds(isHighPulse ? sequence[i] : -1*sequence[i]);
+        }
+      }
+      state->publish_state();
     }
 };

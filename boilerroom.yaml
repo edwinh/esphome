@@ -5,10 +5,13 @@ substitutions:
 esphome:
   name: $name
 
-esp32:
-  board: nodemcu-32s
-  framework:
-    type: arduino
+# esp32:
+#   board: nodemcu-32s
+#   framework:
+#     type: arduino
+
+esp8266:
+  board: nodemcuv2   
 
 # Enable logging
 logger:
@@ -43,7 +46,8 @@ web_server:
   port: 80
 
 dallas:
-  - pin: GPIO13
+  # - pin: GPIO13
+  - pin: D4
     update_interval: 5s
 
 sensor:
@@ -65,7 +69,7 @@ sensor:
     disabled_by_default: False
   - platform: adc
     id: heating_indicator
-    pin: GPIO32
+    pin: A0 #GPIO32
     update_interval: 2s
     # internal: True
   - platform: dallas
@@ -125,18 +129,18 @@ switch:
   - platform: gpio
     id: heating_led
     pin:
-      number: GPIO33
+      number: D5 #GPIO33
       inverted: False
     internal: True
 
   - platform: gpio
     id: boiler_flow
-    pin: GPIO27
+    pin: D6 #GPIO27
     internal: True
     
       
   - platform: gpio
-    pin: GPIO26
+    pin: D7 #GPIO26
     id: cv_flow
     internal: True
   

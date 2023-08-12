@@ -4,16 +4,20 @@ substitutions:
 
 esphome:
   name: $name
-  includes: modules/kaku.h
+  includes: 
+    - modules/kaku.h
   
-esp32:
-  board: nodemcu-32s
-  framework:
-    type: arduino
+# esp32:
+#   board: nodemcu-32s
+#   framework:
+#     type: arduino
+
+esp8266:
+  board: nodemcuv2
 
 # Enable logging
 logger:
-  # level: DEBUG
+  level: DEBUG
 
 # Enable Home Assistant API
 api:
@@ -54,35 +58,31 @@ wifi:
 #   buffer_size: 2kb
 
 remote_transmitter:
-  pin: GPIO32
+  # D1 = GPIO5
+  pin: D1
   # RF uses a 100% carrier signal
   carrier_duty_percent: 100%
-
-# sensor:
-#   - platform: uptime
-#     internal: false
-#     id: ${name}_uptime
-#     name: "${friendly_name} uptime"
+  id: kaku_transmitter
 
 switch:
-  - platform: template
-    id: kaku_dinner
-    name: Kaku Dinner Table
-    optimistic: true
-    turn_on_action:
-      - remote_transmitter.transmit_raw:
-          code: !lambda |-
-            KlikAanKlikUitNew kaku(1013, 260);
-            return kaku.dim(2, 10);
-          repeat:
-            times: 7
-    turn_off_action:
-      - remote_transmitter.transmit_raw:
-          code: !lambda |-
-            KlikAanKlikUitNew kaku(1013, 260);
-            return kaku.off(2);
-          repeat:
-            times: 7
+  # - platform: template
+  #   id: kaku_dinner
+  #   name: Kaku Dinner Table
+  #   optimistic: true
+  #   turn_on_action:
+  #     - remote_transmitter.transmit_raw:
+  #         code: !lambda |-
+  #           KlikAanKlikUitNew kaku(1013, 260);
+  #           return kaku.dim(2, 10);
+  #         repeat:
+  #           times: 7
+  #   turn_off_action:
+  #     - remote_transmitter.transmit_raw:
+  #         code: !lambda |-
+  #           KlikAanKlikUitNew kaku(1013, 260);
+  #           return kaku.off(2);
+  #         repeat:
+  #           times: 7
   - platform: template
     id: kaku_D1
     name: Kaku D1
@@ -137,3 +137,23 @@ switch:
             return kaku.off('D', 3);
           repeat:
             times: 4
+
+light:
+  # - platform: custom
+  #   lambda: |-
+  #     auto dinnerLight = new KlikAanKlikUitNew(1013, 260);
+  #     App.register_component(dinnerLight);
+  #     return {dinnerLight};
+  
+  #   lights:
+  #     - name: "Dinner table"
+  #       id: kaku_dinner
+  #       default_transition_length: 0s
+
+  - platform: kaku_dimmable_light
+    id: kaku_dinner
+    name: dinnertable
+    pulsewidth: 260us
+    address: 1013
+    unit: 2
+    default_transition_length: 0s

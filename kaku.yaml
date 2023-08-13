@@ -65,60 +65,72 @@ remote_transmitter:
   id: kaku_transmitter
 
 switch:
-  - platform: template
+  # - platform: template
+  #   id: kaku_D1
+  #   name: Kaku D1
+  #   optimistic: true
+  #   turn_on_action:
+  #     - remote_transmitter.transmit_raw:
+  #         code: !lambda |-
+  #           KlikAanKlikUitOld kaku;
+  #           return kaku.on('D', 1);
+  #         repeat:
+  #           times: 4
+  #   turn_off_action:
+  #     - remote_transmitter.transmit_raw:
+  #         code: !lambda |-
+  #           KlikAanKlikUitOld kaku;
+  #           return kaku.off('D', 1);
+  #         repeat:
+  #           times: 4
+  # - platform: template
+  #   id: kaku_D2
+  #   name: Kaku D2
+  #   optimistic: true
+  #   turn_on_action:
+  #     - remote_transmitter.transmit_raw:
+  #         code: !lambda |-
+  #           KlikAanKlikUitOld kaku;
+  #           return kaku.on('D', 2);
+  #         repeat:
+  #           times: 4
+  #   turn_off_action:
+  #     - remote_transmitter.transmit_raw:
+  #         code: !lambda |-
+  #           KlikAanKlikUitOld kaku;
+  #           return kaku.off('D', 2);
+  #         repeat:
+  #           times: 4
+  # - platform: template
+  #   id: kaku_D3
+  #   name: Kaku D3
+  #   optimistic: true
+  #   turn_on_action:
+  #     - remote_transmitter.transmit_raw:
+  #         code: !lambda |-
+  #           KlikAanKlikUitOld kaku;
+  #           return kaku.on('D', 3);
+  #         repeat:
+  #           times: 4
+  #   turn_off_action:
+  #     - remote_transmitter.transmit_raw:
+  #         code: !lambda |-
+  #           KlikAanKlikUitOld kaku;
+  #           return kaku.off('D', 3);
+  #         repeat:
+  #           times: 4
+  - platform: kaku_old_switch
     id: kaku_D1
-    name: Kaku D1
-    optimistic: true
-    turn_on_action:
-      - remote_transmitter.transmit_raw:
-          code: !lambda |-
-            KlikAanKlikUitOld kaku;
-            return kaku.on('D', 1);
-          repeat:
-            times: 4
-    turn_off_action:
-      - remote_transmitter.transmit_raw:
-          code: !lambda |-
-            KlikAanKlikUitOld kaku;
-            return kaku.off('D', 1);
-          repeat:
-            times: 4
-  - platform: template
+    name: kaku D1
+    pulsewidth: 375us
+    address: D
+    unit: 1
+  - platform: kaku_old_switch
     id: kaku_D2
-    name: Kaku D2
-    optimistic: true
-    turn_on_action:
-      - remote_transmitter.transmit_raw:
-          code: !lambda |-
-            KlikAanKlikUitOld kaku;
-            return kaku.on('D', 2);
-          repeat:
-            times: 4
-    turn_off_action:
-      - remote_transmitter.transmit_raw:
-          code: !lambda |-
-            KlikAanKlikUitOld kaku;
-            return kaku.off('D', 2);
-          repeat:
-            times: 4
-  - platform: template
-    id: kaku_D3
-    name: Kaku D3
-    optimistic: true
-    turn_on_action:
-      - remote_transmitter.transmit_raw:
-          code: !lambda |-
-            KlikAanKlikUitOld kaku;
-            return kaku.on('D', 3);
-          repeat:
-            times: 4
-    turn_off_action:
-      - remote_transmitter.transmit_raw:
-          code: !lambda |-
-            KlikAanKlikUitOld kaku;
-            return kaku.off('D', 3);
-          repeat:
-            times: 4
+    name: kaku D2
+    pulsewidth: 375us
+    address: D
+    unit: 2
   - platform: kaku_old_switch
     id: kaku_D3
     name: kaku D3

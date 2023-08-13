@@ -27,10 +27,8 @@ async def to_code(config):
           round(config[CONF_PULSEWIDTH].total_microseconds))
         cg.add(var.set_pulsewidth(duration))
     
-    if CONF_ADDRESS in config:
-        address = ord(config[CONF_ADDRESS][0]) - ord('A')
-        cg.add(var.set_address(address))
+    address = ord(config[CONF_ADDRESS][0]) - ord('A')
+    cg.add(var.set_address(address))
 
-    if CONF_UNIT in config:
-        address = int(config[CONF_UNIT])
-        cg.add(var.set_address(address))
+    unit = int(config[CONF_UNIT])
+    cg.add(var.set_unit(unit))

@@ -25,9 +25,9 @@ class KakuOldSwitch : public switch_::Switch, public Component {
   void dump_config() override;
 
 protected:
-  uint16_t pulsewidth_{260};
+  uint16_t pulsewidth_{375}; // 375 us
   uint16_t unit_{2};
-  uint16_t address_{0};
+  uint16_t address_{3}; //D
 
 };
 

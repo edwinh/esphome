@@ -27,6 +27,7 @@ async def to_code(config):
           round(config[CONF_PULSEWIDTH].total_microseconds))
         cg.add(var.set_pulsewidth(duration))
     
+    # Convert letter to int A = 0, D = 3
     address = ord(config[CONF_ADDRESS][0]) - ord('A')
     cg.add(var.set_address(address))
 

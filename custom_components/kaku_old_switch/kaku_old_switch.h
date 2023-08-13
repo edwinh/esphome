@@ -20,7 +20,7 @@ class KakuOldSwitch : public switch_::Switch, public Component {
   void set_pulsewidth(uint16_t pulsewidth) {this->pulsewidth_ = pulsewidth;}
   uint16_t get_pulsewidth() {return this->pulsewidth_; }
   char get_address() {return this->address_; }
-  uint16_t get_unit() {return this->address_; }
+  uint16_t get_unit() {return this->unit_; }
   void write_state(bool state) override;
   void dump_config() override;
 

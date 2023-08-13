@@ -1,14 +1,14 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import light, output
+from esphome.components import light
 from esphome.core import TimePeriod
-from esphome.const import CONF_OUTPUT_ID, CONF_OUTPUT, CONF_ADDRESS, CONF_ID
+from esphome.const import CONF_OUTPUT_ID, CONF_ADDRESS
 
 kaku_dimmable_light_ns = cg.esphome_ns.namespace('kaku_dimmable_light')
 KakuDimmableLightOutput = kaku_dimmable_light_ns.class_('KakuDimmableLightOutput', light.LightOutput)
 
 CONF_PULSEWIDTH = "pulsewidth"
-CONF_ADDRESS = "address"
+# CONF_ADDRESS = "address"
 CONF_UNIT = "unit"
 
 CONFIG_SCHEMA = light.BRIGHTNESS_ONLY_LIGHT_SCHEMA.extend({

@@ -65,24 +65,6 @@ remote_transmitter:
   id: kaku_transmitter
 
 switch:
-  # - platform: template
-  #   id: kaku_dinner
-  #   name: Kaku Dinner Table
-  #   optimistic: true
-  #   turn_on_action:
-  #     - remote_transmitter.transmit_raw:
-  #         code: !lambda |-
-  #           KlikAanKlikUitNew kaku(1013, 260);
-  #           return kaku.dim(2, 10);
-  #         repeat:
-  #           times: 7
-  #   turn_off_action:
-  #     - remote_transmitter.transmit_raw:
-  #         code: !lambda |-
-  #           KlikAanKlikUitNew kaku(1013, 260);
-  #           return kaku.off(2);
-  #         repeat:
-  #           times: 7
   - platform: template
     id: kaku_D1
     name: Kaku D1
@@ -137,19 +119,16 @@ switch:
             return kaku.off('D', 3);
           repeat:
             times: 4
+  - platform: kaku_old_switch
+    id: kaku_D3
+    name: kaku D3
+    pulsewidth: 375us
+    address: D
+    unit: 3
+    
+    
 
 light:
-  # - platform: custom
-  #   lambda: |-
-  #     auto dinnerLight = new KlikAanKlikUitNew(1013, 260);
-  #     App.register_component(dinnerLight);
-  #     return {dinnerLight};
-  
-  #   lights:
-  #     - name: "Dinner table"
-  #       id: kaku_dinner
-  #       default_transition_length: 0s
-
   - platform: kaku_dimmable_light
     id: kaku_dinner
     name: dinnertable

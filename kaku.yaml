@@ -4,8 +4,8 @@ substitutions:
 
 esphome:
   name: $name
-  includes: 
-    - modules/kaku.h
+  # includes: 
+  #   - modules/kaku.h
   
 # esp32:
 #   board: nodemcu-32s

@@ -44,10 +44,12 @@ void KakuDimmableLightOutput::write_state(light::LightState *state) {
     sequence = kaku.off(unit);
     ESP_LOGD(TAG, "Light turned off ");
   }
+
   // Write sequence 
   for (int j=0; j < 4; j++) {
     for (int i=0; i < sequence.size(); i++) {
       bool isHighPulse = sequence[i] >= 0;
+      //ESP_LOGD(TAG, "%d", sequence[i]);
       digitalWrite(outPin, isHighPulse);
       delayMicroseconds(isHighPulse ? sequence[i] : -1*sequence[i]);
     }

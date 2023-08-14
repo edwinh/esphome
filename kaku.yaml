@@ -57,6 +57,12 @@ wifi:
 #   idle: 4ms
 #   buffer_size: 2kb
 
+remote_transmitter:
+  # D1 = GPIO5
+  pin: D1
+  # RF uses a 100% carrier signal
+  carrier_duty_percent: 100%
+
 switch:
   - platform: kaku_old_switch
     id: kaku_D1

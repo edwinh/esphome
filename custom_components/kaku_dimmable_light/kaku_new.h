@@ -4,7 +4,6 @@ class KakuNew {
   private:
     const int KAKU_LOW = -1;
     const int KAKU_HIGH = 1;
-    const int PULSE_WIDTH = 375;
     int address;
     int periodusec;
 

@@ -5,8 +5,6 @@
 namespace esphome {
 namespace kaku_old_switch {
 
-
-
 void KakuOldSwitch::setup() {
 
 }

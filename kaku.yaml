@@ -57,11 +57,11 @@ wifi:
 #   idle: 4ms
 #   buffer_size: 2kb
 
-remote_transmitter:
-  # D1 = GPIO5
-  pin: D1
-  # RF uses a 100% carrier signal
-  carrier_duty_percent: 100%
+# remote_transmitter:
+#   # D1 = GPIO5
+#   pin: D1
+#   # RF uses a 100% carrier signal
+#   carrier_duty_percent: 100%
 
 switch:
   - platform: kaku_old_switch
@@ -87,6 +87,7 @@ light:
   - platform: kaku_dimmable_light
     id: kaku_dinner
     name: dinnertable
+    pin: GPIO5
     pulse_length: 260us
     address: 1013
     unit: 2

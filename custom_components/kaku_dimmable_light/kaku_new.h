@@ -1,5 +1,8 @@
 #include <vector>
 
+namespace esphome {
+namespace kaku_dimmable_light {
+
 class KakuNew {
   private:
     const int KAKU_LOW = -1;
@@ -123,3 +126,5 @@ class KakuNew {
     }
 
 };
+
+}}

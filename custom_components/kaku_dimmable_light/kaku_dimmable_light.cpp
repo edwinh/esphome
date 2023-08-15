@@ -33,9 +33,10 @@ void KakuDimmableLightOutput::write_state(light::LightState *state) {
     ESP_LOGD(TAG, "dimlevel=%d", dimlevel);
     sequence = kaku.dim(unit_,dimlevel);
     ESP_LOGD(TAG, "Light turned on");
+    
   } else {
     sequence = kaku.off(unit_);
-    ESP_LOGD(TAG, "Light turned off ");
+    ESP_LOGD(TAG, "Light turned off");
   }
   // Write sequence 
   for (int j=0; j < 3; j++) {

@@ -17,10 +17,6 @@ class KakuDimmableLightOutput : public light::LightOutput, public Component {
   void set_address(uint16_t address) { this->address_ = address; }
   void set_unit(uint16_t unit) { this->unit_ = unit; }
 
-  uint16_t get_pulsewidth() {return this->pulsewidth_; }
-  uint16_t get_address() {return this->address_; }
-  uint16_t get_unit() {return this->unit_; }
-
   void write_state(light::LightState *state) override;
   void dump_config() override;
  

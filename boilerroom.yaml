@@ -110,7 +110,7 @@ binary_sensor:
     name: "Boiler is Heating"
     icon: "mdi:fire"
     sensor_id: heating_indicator
-    threshold: 0.5
+    threshold: 0.4
     on_press:
       then:
         - switch.turn_on: heating_led

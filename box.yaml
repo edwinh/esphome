@@ -1,0 +1,353 @@
+substitutions:
+  name: box
+  friendly_name: "ESP32-S3-Box"
+
+esphome:
+  name: box
+  friendly_name: Box
+
+esp32:
+  board: esp32s3box
+  framework:
+    type: arduino
+#    version: latest # might be required, possibly update esphome version instead
+
+external_components:
+  - source: github://pr#4793
+    components: [ tt21100 ]
+  - source: github://pr#4861
+    components: [ es8311 ]
+  - source: github://rpatel3001/esphome@es7210
+    components: [ es7210 ]
+
+sensor:
+  - platform: homeassistant
+    id: living_room_temperature
+    entity_id: sensor.living_room_temperature  # Replace with the entity ID of your temperature sensor
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  ap:
+    ssid: "ESP_${name}"
+    password: !secret wifi_password
+
+ota:
+  password: !secret wifi_password
+
+api:
+  # encryption:
+  #   key: !secret api_encryption_key
+  reboot_timeout: 0s
+
+logger:
+  # CDC logging is currently not working on the S3
+  # See https://github.com/espressif/esp-idf/commit/9924d9f27192a5fab5f66230c72249ecc6cad34c
+  #hardware_uart: USB_CDC
+  level: NONE
+  logs:
+    esp32_ble: WARN
+    esp32_ble_tracker: WARN
+    ble_dist: WARN
+    sensor: WARN
+    ledc.output: WARN
+    component: WARN
+    ili9xxx: WARN
+    tt21100: WARN
+    touchscreen: WARN
+    wifi: WARN
+    es8311: WARN
+    i2s_audio: VERBOSE
+    voice_assistant: VERBOSE
+    es7210: WARN
+
+time:
+  - platform: sntp
+    id: time_sntp
+
+globals:
+- id: page
+  type: int
+  initial_value: "1"
+- id: backlight_on
+  type: bool
+  initial_value: "true"
+
+output:
+  - platform: ledc
+    id: rgb_red
+    pin: GPIO39
+  - platform: ledc
+    id: rgb_green
+    pin: GPIO40
+  - platform: ledc
+    id: rgb_blue
+    pin: GPIO41
+  - platform: ledc
+    pin: GPIO45
+    id: lcd_backlight_output
+
+light:
+  - platform: rgb
+    name: RGB LED
+    red: rgb_red
+    green: rgb_green
+    blue: rgb_blue
+  - platform: monochromatic
+    output: lcd_backlight_output
+    name: "LCD Backlight"
+    id: lcd_backlight
+    restore_mode: ALWAYS_ON
+    on_turn_on: 
+      - script.execute: backlight_script
+        
+
+spi:
+  clk_pin: GPIO7
+  mosi_pin: GPIO6
+
+qr_code:
+  - id: qr_wifi
+    value: "WIFI:T:WPA2;S:hype;P:wirelesshype;T:infrastructure;;"
+
+display:
+  - platform: ili9xxx
+    model: s3box
+    cs_pin: GPIO5
+    dc_pin: GPIO4
+    reset_pin: GPIO48
+    id: lcd
+    auto_clear_enabled: false
+    # Width = 320, Height = 240
+    pages:
+      - id: page1
+        lambda: |-
+          auto bg = Color(250, 250, 250);
+          auto text = Color(66, 66, 66);
+          it.fill(bg);
+          auto red = Color(255, 0, 0);
+          auto green = Color(0, 255, 0);
+          auto blue = Color(0, 0, 255);
+          //it.filled_rectangle(10, 170, 60, 60, red);
+          it.image(10, 170, id(floor_lamp_icon), text);
+          it.filled_rectangle(130, 170, 60, 60, green);
+          it.filled_rectangle(250, 170, 60, 60, blue);
+          it.strftime(250, 10, id(font_small), text, "%H:%M:%S", id(time_sntp).now());
+          // it.strftime(160, 115, id(font_medium), text, TextAlign::CENTER, "%a %e %b", id(time_sntp).now());
+          if (id(muted).state) {
+            it.image(280, 0, id(mic_mute_icon), ImageAlign::TOP_RIGHT, text);
+          }
+          if (id(ext_speaker).is_muted()) {
+            it.image(320, 0, id(mute_icon), ImageAlign::TOP_RIGHT, text);
+          }
+          if (id(voice_asst)->is_running()) {
+            it.image(0, 0, id(voice_icon), ImageAlign::TOP_LEFT, text);
+          }
+      - id: page2
+        lambda: |-
+          auto bg = Color(250, 250, 250);
+          auto text = Color(66, 66, 66);
+          it.fill(bg);
+          it.strftime(250, 10, id(font_small), text, "%H:%M:%S", id(time_sntp).now());
+          it.printf(5, 10, id(font_medium), text, "%.1f°C", id(living_room_temperature).state);
+          it.print(100, 80, id(font_small), text, "Connect to my WiFi!");
+          it.qr_code(100, 100, id(qr_wifi), text, 4);
+
+font:
+  - file: "gfonts://Roboto@500"
+    id: font_large
+    size: 70
+    glyphs: "0123456789:APM."
+  - file: "gfonts://Roboto@500"
+    id: font_medium
+    size: 30
+  - file: "gfonts://Roboto@500"
+    id: font_small
+    size: 15
+
+image:
+  - file: mdi:volume-off
+    id: mute_icon
+    resize: 40x40
+  - file: mdi:microphone-off
+    id: mic_mute_icon
+    resize: 40x40
+  - file: mdi:account-voice
+    id: voice_icon
+    resize: 40x40
+  - file: mdi:floor-lamp
+    id: floor_lamp_icon
+    resize: 60x60
+  - file: mdi:floor-lamp-outline
+    id: floor_lamp_icon_off
+    resize: 40x40
+  - file: mdi:ceiling-light
+    id: ceiling_light_icon
+    resize: 40x40
+  - file: mdi:ceiling-light-outline
+    id: ceiling_light_icon_off
+    resize: 40x40
+  - file: mdi:desk
+    id: office_icon
+    resize: 40x40
+
+i2c:
+  scl: GPIO18
+  sda: GPIO8
+  scan: true
+
+touchscreen:
+  - platform: tt21100
+    address: 0x24
+    interrupt_pin: GPIO3
+    # Don't use as the reset pin is shared with the display, so the ili9xxx will perform the reset
+    #reset_pin: GPIO48
+
+script:
+  - id: backlight_script
+    mode: restart     # Light will be kept on during 5 sec since
+                      # the latest time the script is executed
+    then:
+      - light.turn_on: 
+          id: lcd_backlight
+          brightness: 50%
+      - globals.set:
+          id: backlight_on
+          value: "true"
+      - delay: 5sec
+      - light.turn_off: 
+          id: lcd_backlight
+          transition_length: 3s
+      - globals.set:
+          id: backlight_on
+          value: "false"
+      - delay: 10sec        # GO back to homepage after this time
+      - display.page.show: page1
+      - lambda: id(page) = 1;
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: true
+    id: settings
+    name: "Settings"
+    on_press:
+      - voice_assistant.start:
+    on_release:
+      - voice_assistant.stop:
+  - platform: gpio
+    pin:
+      number: GPIO1
+      inverted: true
+    id: muted
+    name: "Muted"
+  - platform: tt21100
+    name: "Home"
+    index: 0
+    on_press: 
+      then:
+        - display.page.show_next: lcd
+        - lambda: |-
+            id(page) = id(page) + 1;
+            if (id(page) > 2) {
+              id(page) = 1;
+            }
+        - component.update: lcd
+        - script.execute: backlight_script
+        
+  - platform: touchscreen
+    name: "Red"
+    id: red_touch
+    x_min: 10
+    x_max: 70
+    y_min: 170
+    y_max: 230
+    filters:
+      
+      - lambda: |-
+          if (id(backlight_on) == false) {
+            return false;
+          }
+          if (id(page) == 1) {   // Only respond when on first page
+            return x;
+          } else {
+            return false;
+          }
+    
+  
+  - platform: touchscreen
+    name: "Green"
+    x_min: 130
+    x_max: 190
+    y_min: 170
+    y_max: 230
+  - platform: touchscreen
+    name: "Blue"
+    x_min: 250
+    x_max: 310
+    y_min: 170
+    y_max: 230
+  - platform: touchscreen
+    name: "Screen"
+    id: screen_touch
+    x_min: 0
+    x_max: 320
+    y_min: 0
+    y_max: 240
+    filters:
+      - delayed_on_off: 50ms
+    on_press:
+      then: 
+        - script.execute: backlight_script
+
+i2s_audio:
+  i2s_lrclk_pin: GPIO47
+  i2s_bclk_pin: GPIO17
+  i2s_mclk_pin: GPIO2
+
+es8311:
+  address: 0x18
+
+# mutually exclusive with media_player
+#speaker:
+#  - platform: i2s_audio
+#    id: ext_speaker
+#    dac_type: external
+#    i2s_dout_pin: GPIO15
+#    mode: mono
+
+media_player:
+  - platform: i2s_audio
+    name: Media Player
+    id: ext_speaker
+    dac_type: external
+    i2s_dout_pin: GPIO15
+    mute_pin:
+      number: GPIO46
+      inverted: true
+
+es7210:
+  address: 0x40
+
+microphone:
+  - platform: i2s_audio
+    id: ext_mic
+    adc_type: external
+    pdm: false
+    i2s_din_pin: GPIO16
+    bits_per_sample: 16bit
+
+voice_assistant:
+  id: voice_asst
+  microphone: ext_mic
+  media_player: ext_speaker
+
+
+
+# i2c device at address 0x18 - ES8311 Audio Codec
+# i2c device at address 0x24 - TT21100 Touchscreen
+# i2c device at address 0x40 - ES7210 Mic ADC
+# i2c device at address 0x68 - ICM-42607-P IMU

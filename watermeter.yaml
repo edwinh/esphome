@@ -46,10 +46,12 @@ captive_portal:
 web_server:
   port: 80
 
-deep_sleep:
-  run_duration: 330s
-  wakeup_pin: GPIO32
-  wakeup_pin_mode: INVERT_WAKEUP
+# deep_sleep:
+#   run_duration: 330s
+#   wakeup_pin: GPIO32
+#   wakeup_pin_mode: INVERT_WAKEUP
+
+esp32_ble_tracker:
 
 globals:
  - id: main_counter_pulses
@@ -115,6 +117,33 @@ sensor:
 #     state_class: total_increasing
 #     filters:
 #       - multiply: 0.001
+- platform: xiaomi_lywsd03mmc
+  mac_address: "A4:C1:38:A8:64:67"
+  bindkey: "eef418daf699a0c188f3bfd17e4565d9"
+  temperature:
+    name: "Living Room Temperature"
+  humidity:
+    name: "Living Room Humidity"
+  battery_level:
+    name: "Living Room Battery Level"
+- platform: xiaomi_lywsd03mmc
+  mac_address: "A4:C1:38:22:29:49"
+  bindkey: "eef418daf699a0c188f3bfd17e4565d9"
+  temperature:
+    name: "Bedroom Temperature"
+  humidity:
+    name: "Bedroom Humidity"
+  battery_level:
+    name: "Bedroom Battery Level"
+- platform: xiaomi_lywsd03mmc
+  mac_address: "A4:C1:38:D9:32:9D"
+  bindkey: "eef418daf699a0c188f3bfd17e4565d9"
+  temperature:
+    name: "Bathroom Temperature"
+  humidity:
+    name: "Bathroom Humidity"
+  battery_level:
+    name: "Bathroom Battery Level"
 
 - platform: template
   id: water_main_consumption

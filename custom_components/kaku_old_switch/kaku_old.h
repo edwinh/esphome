@@ -1,12 +1,12 @@
 #include <vector>
 
-const u_int16_t PULSE_WIDTH = 375;
+const u_int16_t PULSE_WIDTH {375};
 
 class KakuOld {
   private:
     u_int16_t periodusec;
-    const int KAKU_LOW = -1;
-    const int KAKU_HIGH = 1;
+    const int KAKU_LOW {-1};
+    const int KAKU_HIGH {1};
 
   protected:
     u_int16_t address_;
@@ -31,7 +31,7 @@ class KakuOld {
       getTelegram(this->address_, device, on, trits);
       int periodusec = this->periodusec;
 
-      for (int i = 0; i < 12; i++) {
+      for (int i {0}; i < 12; i++) {
         int code = trits[i];
         switch (code) {
           case 0:
@@ -64,7 +64,7 @@ class KakuOld {
       int address = _address;
       u_int16_t device = _device - 1;
 
-      for (int i = 0; i < 4; i++) {
+      for (int i {0}; i < 4; i++) {
         trits[i] = (address & 1) ? 2 : 0;
         address >>= 1;
 

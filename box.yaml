@@ -23,7 +23,12 @@ external_components:
 sensor:
   - platform: homeassistant
     id: living_room_temperature
-    entity_id: sensor.living_room_temperature  # Replace with the entity ID of your temperature sensor
+    entity_id: sensor.living_room_temperature  # Replace with the entity ID of your temperature sensor  
+  - platform: homeassistant
+    id: weather_forecast_temperature
+    entity_id: weather.forecast_hype_hass  # Replace with the entity ID of your temperature sensor
+    attribute: temperature
+
 
 wifi:
   ssid: !secret wifi_ssid
@@ -46,21 +51,21 @@ logger:
   # See https://github.com/espressif/esp-idf/commit/9924d9f27192a5fab5f66230c72249ecc6cad34c
   #hardware_uart: USB_CDC
   level: NONE
-  logs:
-    esp32_ble: WARN
-    esp32_ble_tracker: WARN
-    ble_dist: WARN
-    sensor: WARN
-    ledc.output: WARN
-    component: WARN
-    ili9xxx: WARN
-    tt21100: WARN
-    touchscreen: WARN
-    wifi: WARN
-    es8311: WARN
-    i2s_audio: VERBOSE
-    voice_assistant: VERBOSE
-    es7210: WARN
+  # logs:
+  #   esp32_ble: WARN
+  #   esp32_ble_tracker: WARN
+  #   ble_dist: WARN
+  #   sensor: WARN
+  #   ledc.output: WARN
+  #   component: WARN
+  #   ili9xxx: WARN
+  #   tt21100: WARN
+  #   touchscreen: WARN
+  #   wifi: WARN
+  #   es8311: WARN
+  #   i2s_audio: VERBOSE
+  #   voice_assistant: VERBOSE
+  #   es7210: WARN
 
 time:
   - platform: sntp
@@ -102,14 +107,13 @@ light:
     on_turn_on: 
       - script.execute: backlight_script
         
-
 spi:
   clk_pin: GPIO7
   mosi_pin: GPIO6
 
 qr_code:
   - id: qr_wifi
-    value: "WIFI:T:WPA2;S:hype;P:wirelesshype;T:infrastructure;;"
+    value: !secret qr_wifi
 
 display:
   - platform: ili9xxx
@@ -130,9 +134,17 @@ display:
           auto green = Color(0, 255, 0);
           auto blue = Color(0, 0, 255);
           //it.filled_rectangle(10, 170, 60, 60, red);
-          it.image(10, 170, id(floor_lamp_icon), text);
-          it.filled_rectangle(130, 170, 60, 60, green);
+          it.image(10, 170, id(sofa_icon), text);
+          it.image(130, 170, id(sleep_icon), text);
           it.filled_rectangle(250, 170, 60, 60, blue);
+          if (!isnan(id(weather_forecast_temperature).state)) {
+            it.image(5, 5, id(tree_icon_small), ImageAlign::TOP_LEFT, text);
+            it.printf(40, 12, id(font_small), text, "%.1f °C", id(weather_forecast_temperature).state);
+          }
+          if (!isnan(id(living_room_temperature).state)) {
+            it.image(5, 40, id(home_icon_small), ImageAlign::TOP_LEFT, text);
+            it.printf(40, 47, id(font_small), text, "%.1f°C", id(living_room_temperature).state);
+          }
           it.strftime(250, 10, id(font_small), text, "%H:%M:%S", id(time_sntp).now());
           // it.strftime(160, 115, id(font_medium), text, TextAlign::CENTER, "%a %e %b", id(time_sntp).now());
           if (id(muted).state) {
@@ -150,7 +162,9 @@ display:
           auto text = Color(66, 66, 66);
           it.fill(bg);
           it.strftime(250, 10, id(font_small), text, "%H:%M:%S", id(time_sntp).now());
-          it.printf(5, 10, id(font_medium), text, "%.1f°C", id(living_room_temperature).state);
+          if (!isnan(id(living_room_temperature).state)) {
+            it.printf(5, 10, id(font_medium), text, "%.1f°C", id(living_room_temperature).state);
+          }
           it.print(100, 80, id(font_small), text, "Connect to my WiFi!");
           it.qr_code(100, 100, id(qr_wifi), text, 4);
 
@@ -179,6 +193,18 @@ image:
   - file: mdi:floor-lamp
     id: floor_lamp_icon
     resize: 60x60
+  - file: mdi:sofa
+    id: sofa_icon
+    resize: 60x60
+  - file: mdi:sleep
+    id: sleep_icon
+    resize: 60x60
+  - file: mdi:tree-outline
+    id: tree_icon_small
+    resize: 30x30
+  - file: mdi:home-outline
+    id: home_icon_small
+    resize: 30x30
   - file: mdi:floor-lamp-outline
     id: floor_lamp_icon_off
     resize: 40x40
@@ -215,7 +241,7 @@ script:
       - globals.set:
           id: backlight_on
           value: "true"
-      - delay: 5sec
+      - delay: 300sec
       - light.turn_off: 
           id: lcd_backlight
           transition_length: 3s
@@ -259,14 +285,13 @@ binary_sensor:
         - script.execute: backlight_script
         
   - platform: touchscreen
-    name: "Red"
-    id: red_touch
+    name: "Living touch"
+    id: living_touch
     x_min: 10
     x_max: 70
     y_min: 170
     y_max: 230
     filters:
-      
       - lambda: |-
           if (id(backlight_on) == false) {
             return false;
@@ -277,13 +302,23 @@ binary_sensor:
             return false;
           }
     
-  
   - platform: touchscreen
-    name: "Green"
+    name: "Bedtime touch"
+    id: bedtime_touch
     x_min: 130
     x_max: 190
     y_min: 170
     y_max: 230
+    filters:
+      - lambda: |-
+          if (id(backlight_on) == false) {
+            return false;
+          }
+          if (id(page) == 1) {   // Only respond when on first page
+            return x;
+          } else {
+            return false;
+          }
   - platform: touchscreen
     name: "Blue"
     x_min: 250

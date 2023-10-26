@@ -17,7 +17,7 @@ esp8266:
 
 # Enable logging
 logger:
-  level: DEBUG
+  level: NONE
 
 # Enable Home Assistant API
 api:

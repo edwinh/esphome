@@ -6,7 +6,8 @@ namespace esphome {
 namespace kaku_old_switch {
 
 void KakuOldSwitch::setup() {
-
+  // TODO: Fix pin
+  // this->pin_->setup();
 }
 
 void KakuOldSwitch::write_state(bool state) {
@@ -41,6 +42,8 @@ void KakuOldSwitch::write_state(bool state) {
 
 void KakuOldSwitch::dump_config(){
     ESP_LOGCONFIG(TAG, "KlikAanKlikUit Old switch");
+    // TODO: Fix LOG_PIN
+    // LOG_PIN("  Pin: ", this->pin_);
 }
 
 } //namespace kaku_old_switch

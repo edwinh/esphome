@@ -5,12 +5,14 @@ substitutions:
 esphome:
   name: box
   friendly_name: Box
+  includes:
+    - boxdisplay.h
+
 
 esp32:
   board: esp32s3box
   framework:
     type: arduino
-#    version: latest # might be required, possibly update esphome version instead
 
 external_components:
   - source: github://pr#4793
@@ -133,47 +135,7 @@ display:
     pages:
       - id: page1
         lambda: |-
-          auto bg = Color(250, 250, 250);
-          auto textColor = Color(66, 66, 66);
-          it.fill(bg);
-          it.image(10, 170, id(sofa_icon), textColor);
-          it.image(130, 170, id(sleep_icon), textColor);
-          it.filled_rectangle(250, 170, 60, 60, Color(0,0,255));
-          auto vertical_spacing = 25;
-          auto horizontal_spacing = 35;
-          auto text_vertical_padding = 3;
-          auto margin_left = 5;
-          auto margin_top = 5;
-          auto line = 0;
-          if (!isnan(id(weather_forecast_temperature).state)) {
-            it.image(margin_left, margin_top+(vertical_spacing*line), id(tree_icon_small), textColor);
-            it.printf(margin_left + horizontal_spacing, text_vertical_padding+margin_top+(vertical_spacing*line), id(font_small), textColor, "%.1f °C", id(weather_forecast_temperature).state);
-          }
-          line = 1;
-          if (!isnan(id(living_room_temperature).state)) {
-            it.image(margin_left, margin_top+(vertical_spacing*line), id(home_icon_small), textColor);
-            it.printf(margin_left + horizontal_spacing, text_vertical_padding+margin_top+(vertical_spacing*line), id(font_small), textColor, "%.1f°C", id(living_room_temperature).state);
-          }
-          line = 2;
-          if (!isnan(id(current_power).state)) {
-            it.image(margin_left, margin_top+(vertical_spacing*line), id(flash_icon_small), textColor);
-            it.printf(margin_left + horizontal_spacing, text_vertical_padding+margin_top+(vertical_spacing*line), id(font_small), textColor, "%.3f kW", id(current_power).state);
-          }
-          it.strftime(250, 10, id(font_small), textColor, "%H:%M:%S", id(time_sntp).now());
-          // line = 1;
-          // if (!isnan(id(current_power).state)) {
-          //   it.printf(250, text_vertical_padding+margin_top+(vertical_spacing*line), id(font_small), textColor, "%.3f kW", id(current_power).state);
-          // }
-          
-          if (id(muted).state) {
-            it.image(280, 0, id(mic_mute_icon), ImageAlign::TOP_RIGHT, textColor);
-          }
-          if (id(ext_speaker).is_muted()) {
-            it.image(320, 0, id(mute_icon), ImageAlign::TOP_RIGHT, textColor);
-          }
-          if (id(voice_asst)->is_running()) {
-            it.image(0, 0, id(voice_icon), ImageAlign::TOP_LEFT, textColor);
-          }
+          firstPage(it);
       - id: page2
         lambda: |-
           auto bg = Color(250, 250, 250);
@@ -182,6 +144,10 @@ display:
           it.strftime(250, 10, id(font_small), textColor, "%H:%M:%S", id(time_sntp).now());
           it.print(100, 80, id(font_small), textColor, "Connect to my WiFi!");
           it.qr_code(100, 100, id(qr_wifi), textColor, 4);
+      - id: page3
+        lambda: |-
+          thirdPage(it);
+          
 
 font:
   - file: "gfonts://Roboto@500"
@@ -296,7 +262,7 @@ binary_sensor:
         - display.page.show_next: lcd
         - lambda: |-
             id(page) = id(page) + 1;
-            if (id(page) > 2) {
+            if (id(page) > 3) {
               id(page) = 1;
             }
         - component.update: lcd

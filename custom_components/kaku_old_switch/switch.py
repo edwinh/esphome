@@ -16,7 +16,7 @@ CONFIG_SCHEMA = switch.SWITCH_SCHEMA.extend({
     cv.Required(CONF_ADDRESS): cv.All(cv.Length(max=1)),
     cv.Required(CONF_UNIT): cv.int_,
     # TODO: Fix pin
-    #cv.Required(CONF_PIN): pins.gpio_output_pin_schema,
+    cv.Required(CONF_PIN): pins.gpio_output_pin_schema,
 }).extend(cv.COMPONENT_SCHEMA)
 
 async def to_code(config):
@@ -24,8 +24,8 @@ async def to_code(config):
     await cg.register_component(var, config)
     await switch.register_switch(var, config)
     # TODO: Fix pin
-    #pin = await cg.gpio_pin_expression(config[CONF_PIN])
-    #cg.add(var.set_pin(pin))
+    pin = await cg.gpio_pin_expression(config[CONF_PIN])
+    cg.add(var.set_pin(pin))
 
     if CONF_PULSE_LENGTH in config:
         duration = int(

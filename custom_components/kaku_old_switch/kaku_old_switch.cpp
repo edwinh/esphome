@@ -7,12 +7,10 @@ namespace kaku_old_switch {
 
 void KakuOldSwitch::setup() {
   // TODO: Fix pin
-  // this->pin_->setup();
+  this->pin_->setup();
 }
 
 void KakuOldSwitch::write_state(bool state) {
-// Pin D1 = GPIO5 on the Wemos D1 mini
-  int outPin = 5;
   u_int16_t pw = get_pulsewidth();
   u_int16_t adr = get_address();
   u_int16_t unit = get_unit();
@@ -33,7 +31,7 @@ void KakuOldSwitch::write_state(bool state) {
     for (int i=0; i < sequence.size(); i++) {
       bool isHighPulse = sequence[i] >= 0;
       // ESP_LOGCONFIG(TAG, "Loop: %d, %d", j, sequence[i]);
-      digitalWrite(outPin, isHighPulse);
+      this->pin_->digital_write(isHighPulse);
       delayMicroseconds(isHighPulse ? sequence[i] : -1*sequence[i]);
     }
   }
@@ -42,8 +40,10 @@ void KakuOldSwitch::write_state(bool state) {
 
 void KakuOldSwitch::dump_config(){
     ESP_LOGCONFIG(TAG, "KlikAanKlikUit Old switch");
-    // TODO: Fix LOG_PIN
-    // LOG_PIN("  Pin: ", this->pin_);
+    LOG_PIN("  Pin: ", this->pin_);
+    ESP_LOGCONFIG(TAG, "  Pulsewidth: %d", this->pulsewidth_);
+    ESP_LOGCONFIG(TAG, "  Address: %d", this->address_);
+    ESP_LOGCONFIG(TAG, "  Unit: %d", this->unit_);
 }
 
 } //namespace kaku_old_switch

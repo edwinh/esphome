@@ -2,6 +2,7 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/switch/switch.h"
+#include "esphome/core/hal.h"
 
 namespace esphome {
 namespace kaku_old_switch {
@@ -16,6 +17,7 @@ class KakuOldSwitch : public switch_::Switch, public Component {
     ESP_LOGD(TAG, "Address: %d", address);
 
     }
+  void set_pin(InternalGPIOPin *pin) { pin_ = pin; }
   void set_unit(uint16_t unit) {this->unit_ = unit;}
   void set_pulsewidth(uint16_t pulsewidth) {this->pulsewidth_ = pulsewidth;}
   uint16_t get_pulsewidth() {return this->pulsewidth_; }
@@ -28,6 +30,7 @@ protected:
   uint16_t pulsewidth_{375}; // 375 us
   uint16_t unit_{2};
   uint16_t address_{3}; //D
+  InternalGPIOPin *pin_;
 
 };
 

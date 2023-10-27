@@ -67,18 +67,21 @@ switch:
   - platform: kaku_old_switch
     id: kaku_D1
     name: kaku D1
+    pin: GPIO5
     pulse_length: 375us
     address: D
     unit: 1
   - platform: kaku_old_switch
     id: kaku_D2
     name: kaku D2
+    pin: GPIO5
     pulse_length: 375us
     address: D
     unit: 2
   - platform: kaku_old_switch
     id: kaku_D3
     name: kaku D3
+    pin: GPIO5
     pulse_length: 375us
     address: D
     unit: 3

@@ -90,7 +90,6 @@ void secondPage(esphome::display::Display& it) {
   it.qr_code(100, 100, &esphome::id(qr_wifi), textColor, 4);
 };
 
-
 void fourthPage(esphome::display::Display& it) {
   it.printf(100, 80, &esphome::id(font_small), textColor, "Timer: %s", esphome::id(bedtime_timer_status).state.c_str());
 
@@ -119,7 +118,6 @@ void fourthPage(esphome::display::Display& it) {
 void thirdPage(esphome::display::Display& it) {
   it.print(60, 80, &esphome::id(font_medium), textColor, "Kusje voor Yoni");
   it.image(100, 120, &esphome::id(heart_icon), esphome::Color(255, 0, 0));
-
 };
 
 void displayPage(int pageNumber, esphome::display::Display& it) {

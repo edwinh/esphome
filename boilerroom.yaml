@@ -5,17 +5,12 @@ substitutions:
 esphome:
   name: $name
 
-# esp32:
-#   board: nodemcu-32s
-#   framework:
-#     type: arduino
-
 esp8266:
   board: nodemcuv2   
 
 # Enable logging
 logger:
-#   level: NONE
+   level: NONE
 
 # Enable Home Assistant API
 api:
@@ -138,7 +133,6 @@ switch:
     pin: D6 #GPIO27
     internal: True
     
-      
   - platform: gpio
     pin: D7 #GPIO26
     id: cv_flow

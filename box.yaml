@@ -31,11 +31,17 @@ sensor:
     entity_id: weather.forecast_hype_hass
     attribute: temperature
   - platform: homeassistant
-    id: bedtime_timer
-    entity_id: timer.bedtime_timer
-  - platform: homeassistant
     id: current_power
     entity_id: sensor.electricity_meter_power_consumption
+
+text_sensor:
+  - platform: homeassistant
+    id: bedtime_timer_status
+    entity_id: timer.bedtime_timer
+  - platform: homeassistant
+    id: bedtime_timer_finish
+    entity_id: timer.bedtime_timer
+    attribute: finishes_at
 
 
 wifi:
@@ -134,19 +140,15 @@ display:
     # Width = 320, Height = 240
     pages:
       - id: page1
-        lambda: |-
-          firstPage(it);
+        lambda: displayPage(1, it);
       - id: page2
-        lambda: |-
-          auto bg = Color(250, 250, 250);
-          auto textColor = Color(66, 66, 66);
-          it.fill(bg);
-          it.strftime(250, 10, id(font_small), textColor, "%H:%M:%S", id(time_sntp).now());
-          it.print(100, 80, id(font_small), textColor, "Connect to my WiFi!");
-          it.qr_code(100, 100, id(qr_wifi), textColor, 4);
+        lambda: displayPage(2, it);
       - id: page3
-        lambda: |-
-          thirdPage(it);
+        lambda: displayPage(3, it);
+      - id: page4
+        lambda: displayPage(4, it);
+      - id: page5
+        lambda: displayPage(5, it);
           
 
 font:
@@ -201,6 +203,9 @@ image:
   - file: mdi:desk
     id: office_icon
     resize: 40x40
+  - file: mdi:cards-heart
+    id: heart_icon
+    resize: 100x100
 
 i2c:
   scl: GPIO18
@@ -225,7 +230,7 @@ script:
       - globals.set:
           id: backlight_on
           value: "true"
-      - delay: 300sec
+      - delay: 60sec
       - light.turn_off: 
           id: lcd_backlight
           transition_length: 3s
@@ -262,7 +267,7 @@ binary_sensor:
         - display.page.show_next: lcd
         - lambda: |-
             id(page) = id(page) + 1;
-            if (id(page) > 3) {
+            if (id(page) > numPages) {
               id(page) = 1;
             }
         - component.update: lcd

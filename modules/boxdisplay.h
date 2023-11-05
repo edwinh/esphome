@@ -2,13 +2,19 @@
 #include "esphome.h"
 
 const Color textColor = esphome::Color(66, 66, 66);
-int numPages = 0;
+const Color offColor = esphome::Color(66, 66, 66);
+const Color onColor = esphome::Color(255,100,0);
 
+int numPages = 0;
+esphome::display::DisplayPage *currentPage;
+
+// Intial setup of screen
 void setup(esphome::display::Display& it) {
   const Color bg = esphome::Color(250, 250, 250);
   it.fill(bg);
 }
 
+// Header shown in every page
 void header(esphome::display::Display& it) {
   it.strftime(250, 10, &esphome::id(font_small), textColor, "%H:%M:%S", esphome::id(time_sntp).now());
   if (esphome::id(muted).state) {
@@ -22,8 +28,18 @@ void header(esphome::display::Display& it) {
   }
 }
 
+bool handleTouch(bool x, esphome::display::DisplayPage *touchPage) {
+  if (esphome::id(backlight_on).value() == false) {
+    return false;
+  }
+  if (currentPage == touchPage) {   // Only respond when on designated page
+    return x;
+  } else {
+    return false;
+  }
+}
+
 void bedtimeCounter(int &remain_m, int &remain_s) {
-  
   if (esphome::id(bedtime_timer_status).state == "active") {
     struct tm tm_finish{}, tm_ha_time{};
     time_t t_helper;
@@ -51,15 +67,20 @@ void bedtimeCounter(int &remain_m, int &remain_s) {
 
 void firstPage(esphome::display::Display& it) {
   // Living room
-  it.image(10, 170, &esphome::id(sofa_icon), textColor);
-
+  if (esphome::id(living_room_lights).state == "on") {
+    it.image(10, 170, &esphome::id(sofa_icon), onColor);
+  } else {
+    it.image(10, 170, &esphome::id(sofa_icon), offColor);
+  }
   // Bedtime
   int remain_m{0}, remain_s{0};
   bedtimeCounter(remain_m, remain_s);
   if (!(remain_m == 0 && remain_s == 0)) {
     it.printf(135, 155, &esphome::id(font_small), textColor, "%02d:%02d", remain_m, remain_s);
+    it.image(130, 170, &esphome::id(sleep_icon), onColor);
+  } else {
+    it.image(130, 170, &esphome::id(sleep_icon), offColor);
   }
-  it.image(130, 170, &esphome::id(sleep_icon), textColor);
   
   // Spare
   it.filled_rectangle(250, 170, 60, 60, Color(0,0,255));
@@ -101,11 +122,8 @@ void fourthPage(esphome::display::Display& it) {
     
     strptime(id(bedtime_timer_finish).state.c_str(), "%Y-%m-%dT%T", &tm_finish); // Convert string to time struct
     t_helper = mktime(&tm_finish) + 3600;  // Convert to time_t and add 1 hour (correct for your timezone)
-
     tm_ha_time = esphome::id(time_sntp).now().to_c_tm(); // Get current time in a tm struct
-    
     remain = difftime(t_helper, mktime(&tm_ha_time)); // Calculate difference in seconds
-    
     remain_h = (int) remain/3600;
     remain_m = (int) (remain - 3600*remain_h)/60;
     remain_s = (int) remain - 3600*remain_h - 60*remain_m; 
@@ -123,17 +141,28 @@ void thirdPage(esphome::display::Display& it) {
 void displayPage(int pageNumber, esphome::display::Display& it) {
   setup(it);
   header(it);
+  if (numPages < pageNumber) {
+    numPages = pageNumber;
+  }
   switch(pageNumber) {
   case 1:
+    currentPage = &esphome::id(page1);
     firstPage(it);
     break;
   case 2:
+    currentPage = &esphome::id(page2);
     secondPage(it);
     break;
   case 3:
+    currentPage = &esphome::id(page3);
     thirdPage(it);
     break;
   case 4:
+    currentPage = &esphome::id(page4);
+    fourthPage(it);
+    break;
+  case 5:
+    currentPage = &esphome::id(page5);
     fourthPage(it);
     break;
   default:

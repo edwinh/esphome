@@ -26,14 +26,14 @@ ota:
   password: ""
 
 wifi:
-  ssid: !secret wifi_ssid
+  ssid: !secret wifi_ssid_rpi
   password: !secret wifi_password
   fast_connect: true
   power_save_mode: high
   reboot_timeout: 0s
   manual_ip:
-    static_ip: !secret ip_watermeter
-    gateway: !secret ip_gateway
+    static_ip: !secret ip_watermeter_rpi
+    gateway: !secret ip_gateway_rpi
     subnet: !secret ip_subnet
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails

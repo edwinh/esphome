@@ -1,6 +1,5 @@
 #include "esphome/core/log.h"
 #include "kaku_dimmable_light.h"
-//#include "esphome/components/light/color_mode.h"
 #include "kaku_new.h"
 
 namespace esphome {

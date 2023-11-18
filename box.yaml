@@ -152,6 +152,10 @@ font:
     size: 70
     glyphs: "0123456789:APM."
   - file: "gfonts://Roboto@500"
+    id: font_large_key_pad
+    size: 50
+    glyphs: "0123456789:APM."
+  - file: "gfonts://Roboto@500"
     id: font_medium
     size: 30
   - file: "gfonts://Roboto@500"
@@ -237,17 +241,17 @@ script:
       - lambda: currentPage = id(page1);
 
 binary_sensor:
-  - platform: gpio
-    pin:
-      number: GPIO0
-      mode: INPUT_PULLUP
-      inverted: true
-    id: settings
-    name: "Settings"
-    on_press:
-      - voice_assistant.start:
-    on_release:
-      - voice_assistant.stop:
+  # - platform: gpio
+  #   pin:
+  #     number: GPIO0
+  #     mode: INPUT_PULLUP
+  #     inverted: true
+  #   id: settings
+  #   name: "Settings"
+  #   on_press:
+  #     - voice_assistant.start:
+  #   on_release:
+  #     - voice_assistant.stop:
   - platform: gpio
     pin:
       number: GPIO1
@@ -339,18 +343,18 @@ media_player:
 es7210:
   address: 0x40
 
-microphone:
-  - platform: i2s_audio
-    id: ext_mic
-    adc_type: external
-    pdm: false
-    i2s_din_pin: GPIO16
-    bits_per_sample: 16bit
+# microphone:
+#   - platform: i2s_audio
+#     id: ext_mic
+#     adc_type: external
+#     pdm: false
+#     i2s_din_pin: GPIO16
+#     bits_per_sample: 16bit
 
-voice_assistant:
-  id: voice_asst
-  microphone: ext_mic
-  media_player: ext_speaker
+# voice_assistant:
+#   id: voice_asst
+#   microphone: ext_mic
+#   media_player: ext_speaker
 
 # i2c device at address 0x18 - ES8311 Audio Codec
 # i2c device at address 0x24 - TT21100 Touchscreen

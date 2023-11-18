@@ -153,8 +153,8 @@ sensor:
   device_class: water
   state_class: total_increasing
   icon: "mdi:water"
-  filters:
-    - multiply: 0.001
+  # filters:
+  #   - multiply: 0.001
 
 - platform: template
   id: water_secondary_consumption

@@ -23,9 +23,9 @@ void header(esphome::display::Display& it) {
   if (esphome::id(ext_speaker).is_muted()) {
     it.image(320, 0, &esphome::id(mute_icon), ImageAlign::TOP_RIGHT, textColor);
   }
-  if (esphome::id(voice_asst).is_running()) {
-    it.image(0, 0, &esphome::id(voice_icon), ImageAlign::TOP_LEFT, textColor);
-  }
+  // if (esphome::id(voice_asst).is_running()) {
+  //   it.image(0, 0, &esphome::id(voice_icon), ImageAlign::TOP_LEFT, textColor);
+  // }
 }
 
 bool handleTouch(bool x, esphome::display::DisplayPage *touchPage) {
@@ -138,6 +138,23 @@ void thirdPage(esphome::display::Display& it) {
   it.image(100, 120, &esphome::id(heart_icon), esphome::Color(255, 0, 0));
 };
 
+void fifthPage(esphome::display::Display& it) {
+  int num = 1;
+  int pos_x, pos_y {0};
+  for (int r = 0; r < 3; r++) {
+    for (int c = 0; c < 3; c++) {
+      pos_x = 60+(60*c);
+      pos_y = 10+(60*r);
+      it.printf(pos_x, pos_y, &esphome::id(font_large_key_pad), textColor, "%d", num++);
+    }
+  }
+  pos_y += 60;
+  pos_x = 60;
+  it.print(pos_x, pos_y, &esphome::id(font_large_key_pad), textColor, "X");
+  it.print(pos_x+60, pos_y, &esphome::id(font_large_key_pad), textColor, "0");
+  it.print(pos_x+120, pos_y, &esphome::id(font_large_key_pad), textColor, "V");
+};
+
 void displayPage(int pageNumber, esphome::display::Display& it) {
   setup(it);
   header(it);
@@ -163,7 +180,7 @@ void displayPage(int pageNumber, esphome::display::Display& it) {
     break;
   case 5:
     currentPage = &esphome::id(page5);
-    fourthPage(it);
+    fifthPage(it);
     break;
   default:
     setup(it);

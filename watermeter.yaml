@@ -32,8 +32,8 @@ wifi:
   power_save_mode: high
   reboot_timeout: 0s
   manual_ip:
-    static_ip: !secret ip_watermeter_rpi
-    gateway: !secret ip_gateway_rpi
+    static_ip: !secret ip_watermeter
+    gateway: !secret ip_gateway
     subnet: !secret ip_subnet
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
@@ -83,7 +83,7 @@ script:
   - id: reset_main_counter
     then:
       - lambda: |-
-          id(main_counter_pulses) -= 1;
+          id(main_counter_pulses) -= 1; //604046;
           id(water_main_consumption).publish_state(id(main_counter_pulses));
 
   - id: reset_secondary_counter
@@ -108,15 +108,7 @@ sensor:
   unit_of_measurement: "liter/min"
   timeout: 30sec
   icon: "mdi:water"
-  # total:
-#     name: "Water Meter Total"
-#     unit_of_measurement: "m³"
-#     id: water_meter_total
-#     accuracy_decimals: 3
-#     device_class: water
-#     state_class: total_increasing
-#     filters:
-#       - multiply: 0.001
+
 - platform: xiaomi_lywsd03mmc
   mac_address: "A4:C1:38:A8:64:67"
   bindkey: "eef418daf699a0c188f3bfd17e4565d9"
@@ -148,13 +140,11 @@ sensor:
 - platform: template
   id: water_main_consumption
   name: "Main water consumption"
-  unit_of_measurement: "m³"
-  accuracy_decimals: 3
+  unit_of_measurement: "L"
+  accuracy_decimals: 0
   device_class: water
   state_class: total_increasing
   icon: "mdi:water"
-  # filters:
-  #   - multiply: 0.001
 
 - platform: template
   id: water_secondary_consumption

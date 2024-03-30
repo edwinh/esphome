@@ -62,6 +62,7 @@ sensor:
     unit_of_measurement: "%"
     update_interval: 60s
     disabled_by_default: False
+    device_class: ""
   - platform: adc
     id: heating_indicator
     pin: A0 #GPIO32

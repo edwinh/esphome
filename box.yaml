@@ -40,6 +40,9 @@ text_sensor:
   - platform: homeassistant
     id: living_room_lights
     entity_id: light.living_room_lights
+  - platform: version
+    name: "ESPHome Version"
+
 wifi:
   fast_connect: true
   reboot_timeout: 30s
@@ -81,9 +84,12 @@ logger:
   #   i2s_audio: VERBOSE
   #   voice_assistant: VERBOSE
   #   es7210: WARN
+
 time:
   - platform: sntp
     id: time_sntp
+    timezone: Europe/Amsterdam
+
 globals:
 - id: backlight_on
   type: bool

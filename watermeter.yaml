@@ -98,6 +98,11 @@ script:
           id(water_secondary_consumption).publish_state(id(secondary_counter_pulses));
           id(current_water_consumption).publish_state(id(event_quantity));
           id(last_water_consumption).publish_state(id(last_event_quantity));
+
+text_sensor:
+  - platform: version
+    name: "ESPHome Version"
+    
 sensor:
 - platform: uptime
   internal: false

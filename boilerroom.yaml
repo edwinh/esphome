@@ -45,6 +45,10 @@ dallas:
   - pin: D4
     update_interval: 5s
 
+text_sensor:
+  - platform: version
+    name: "ESPHome Version"
+
 sensor:
   # Uptime and WiFi Signal are just sensors for diagnostics
   # They are not being used in the operation of the boiler

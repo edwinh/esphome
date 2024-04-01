@@ -16,7 +16,7 @@ esp32:
 
 # Enable logging
 logger:
-#   level: NONE
+  level: NONE
 
 # Enable Home Assistant API
 api:
@@ -103,7 +103,9 @@ sensor:
   internal: false
   id: watermeter_uptime
 - platform: pulse_meter
-  pin: GPIO32
+  pin: 
+    number: GPIO32
+    allow_other_uses: true
   name: "Water Pulse Meter"
   unit_of_measurement: "liter/min"
   timeout: 30sec
@@ -173,7 +175,9 @@ sensor:
 binary_sensor:
   - platform: gpio
     id: water_pulse
-    pin: GPIO32
+    pin: 
+      number: GPIO32
+      allow_other_uses: true
     internal: true
     filters:
         - delayed_on_off: 100ms

@@ -11,8 +11,8 @@ esp32:
   framework:
     type: arduino
 external_components:
-  - source: github://pr#4793
-    components: [ tt21100 ]
+  # - source: github://pr#5997
+  #   components: [ touchscreen, tt21100 ]
   - source: github://pr#4861
     components: [ es8311 ]
   - source: github://rpatel3001/esphome@es7210
@@ -28,6 +28,7 @@ sensor:
   - platform: homeassistant
     id: current_power
     entity_id: sensor.electricity_meter_power_consumption
+
 text_sensor:
   - platform: homeassistant
     id: bedtime_timer_status
@@ -73,8 +74,8 @@ logger:
   #   ledc.output: WARN
   #   component: WARN
   #   ili9xxx: WARN
-  #   tt21100: WARN
-  #   touchscreen: WARN
+    # tt21100: WARN
+    # touchscreen: WARN
   #   wifi: WARN
   #   es8311: WARN
   #   i2s_audio: VERBOSE
@@ -214,9 +215,26 @@ i2c:
 touchscreen:
   - platform: tt21100
     address: 0x24
-    interrupt_pin: GPIO3
+    calibration:
+      x_min: 0
+      x_max: 319
+      y_min: 0
+      y_max: 239
+    transform:
+      mirror_x: true
+      mirror_y: false
+    # interrupt_pin: GPIO3
     # Don't use as the reset pin is shared with the display, so the ili9xxx will perform the reset
     #reset_pin: GPIO48
+    on_touch:
+      - lambda: |-
+         ESP_LOGI("cal", "id=%d, x=%d, y=%d, x_raw=%d, y_raw=%0d",
+              touch.id,
+              touch.x,
+              touch.y,
+              touch.x_raw,
+              touch.y_raw
+              ); 
 
 script:
   - id: backlight_script
@@ -240,6 +258,8 @@ script:
       - display.page.show: page1
       - lambda: currentPage = id(page1);
 
+
+
 binary_sensor:
   # - platform: gpio
   #   pin:
@@ -252,6 +272,13 @@ binary_sensor:
   #     - voice_assistant.start:
   #   on_release:
   #     - voice_assistant.stop:
+  - platform: homeassistant
+    id: door_senor
+    entity_id: binary_sensor.door_sensor
+    on_state:
+      then:
+        - script.execute: backlight_script
+    
   - platform: gpio
     pin:
       number: GPIO1

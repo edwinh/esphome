@@ -1,4 +1,3 @@
-
 #include "esphome.h"
 
 const Color textColor = esphome::Color(66, 66, 66);

@@ -53,7 +53,7 @@ wifi:
     static_ip: !secret ip_box
     gateway: !secret ip_gateway
     subnet: !secret ip_subnet
-    dns1: !secret ip_gateway
+    dns1: !secret ip_dns1
 
   ap:
     ssid: "ESP_${name}"
@@ -89,6 +89,9 @@ time:
   - platform: sntp
     id: time_sntp
     timezone: Europe/Amsterdam
+    on_time_sync:
+      then:
+        - logger.log: "Synchronized sntp clock"
 
 globals:
 - id: backlight_on

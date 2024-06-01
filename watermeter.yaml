@@ -83,7 +83,7 @@ script:
   - id: reset_main_counter
     then:
       - lambda: |-
-          id(main_counter_pulses) += 0;
+          id(main_counter_pulses) -= 1;
           id(water_main_consumption).publish_state(id(main_counter_pulses));
 
   - id: reset_secondary_counter

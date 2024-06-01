@@ -333,7 +333,7 @@ binary_sensor:
     y_min: 170
     y_max: 230
     filters:
-      - lambda: return handleTouch(x, id(page2));
+      - lambda: return handleTouch(x, id(page1));
   - platform: touchscreen
     name: "Screen"
     id: screen_touch

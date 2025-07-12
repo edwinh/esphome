@@ -17,7 +17,8 @@ api:
   password: ""
 
 ota:
-  password: ""
+  - platform: esphome
+    password: ""
 
 wifi:
   ssid: !secret wifi_ssid
@@ -40,10 +41,11 @@ captive_portal:
 web_server:
   port: 80
 
-dallas:
+one_wire:
   # - pin: GPIO13
-  - pin: D4
-    update_interval: 5s
+  - platform: gpio
+    pin: D4
+    
 
 text_sensor:
   - platform: version
@@ -72,12 +74,13 @@ sensor:
     pin: A0 #GPIO32
     update_interval: 2s
     # internal: True
-  - platform: dallas
+  - platform: dallas_temp
     id: boiler_output_temperature
     name: "Boiler Output Temperature"
     device_class: "temperature"
     unit_of_measurement: "°C"
     address: 0xe20000001f331a28
+    update_interval: 5s
     resolution: 10
     filters:
       - filter_out: nan
@@ -85,12 +88,13 @@ sensor:
       lambda: |-
         if(x >= id(boiler_input_temperature).state)
           id(boiler_temperature).publish_state(x);
-  - platform: dallas   
+  - platform: dallas_temp
     id: boiler_input_temperature
     name: "Boiler Input Temperature"
     device_class: "temperature"
     unit_of_measurement: "°C"
     address: 0x520000001c15ba28
+    update_interval: 5s
     resolution: 10
     filters:
       - filter_out: nan

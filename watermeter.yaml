@@ -53,12 +53,12 @@ web_server:
 #   wakeup_pin_mode: INVERT_WAKEUP
 
 esp32_ble_tracker:
-  # on_ble_advertise:
-  #   - lambda: |-
-  #       ESP_LOGI("ble_adv", "Found BLE device:");
-  #       ESP_LOGI("ble_adv", "  Name: %s", x.get_name().c_str());
-  #       ESP_LOGI("ble_adv", "  MAC address: %s", x.address_str().c_str());
-  #       ESP_LOGI("ble_adv", "  RSSI: %d", x.get_rssi());
+  on_ble_advertise:
+    - lambda: |-
+        ESP_LOGI("ble_adv", "Found BLE device:");
+        ESP_LOGI("ble_adv", "  Name: %s", x.get_name().c_str());
+        ESP_LOGI("ble_adv", "  MAC address: %s", x.address_str().c_str());
+        ESP_LOGI("ble_adv", "  RSSI: %d", x.get_rssi());
 
 
 globals:
@@ -115,6 +115,7 @@ sensor:
 - platform: uptime
   internal: false
   id: watermeter_uptime
+  update_interval: 600s
 - platform: pulse_meter
   pin: 
     number: GPIO32

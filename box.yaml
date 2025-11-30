@@ -59,7 +59,8 @@ wifi:
     ssid: "ESP_${name}"
     password: !secret wifi_password
 ota:
-  password: !secret wifi_password
+  - platform: esphome
+    password: !secret wifi_password
 api:
   # encryption:
   #   key: !secret api_encryption_key
@@ -137,6 +138,7 @@ qr_code:
 display:
   - platform: ili9xxx
     model: s3box
+    invert_colors: False
     cs_pin: GPIO5
     dc_pin: GPIO4
     reset_pin: GPIO48
@@ -175,45 +177,73 @@ font:
 image:
   - file: mdi:volume-off
     id: mute_icon
+    type: rgb565
+    transparency: alpha_channel
     resize: 40x40
   - file: mdi:microphone-off
     id: mic_mute_icon
+    type: rgb565
+    transparency: alpha_channel
     resize: 40x40
   - file: mdi:account-voice
     id: voice_icon
+    type: rgb565
+    transparency: alpha_channel
     resize: 40x40
   - file: mdi:floor-lamp
     id: floor_lamp_icon
+    type: rgb565
+    transparency: alpha_channel
     resize: 60x60
   - file: mdi:sofa
     id: sofa_icon
+    type: rgb565
+    transparency: alpha_channel
     resize: 60x60
   - file: mdi:sleep
     id: sleep_icon
+    type: rgb565
+    transparency: alpha_channel
     resize: 60x60
   - file: mdi:tree-outline
     id: tree_icon_small
+    type: rgb565
+    transparency: alpha_channel
     resize: 21x21
   - file: mdi:home-outline
     id: home_icon_small
+    type: rgb565
+    transparency: alpha_channel
     resize: 21x21
   - file: mdi:flash
     id: flash_icon_small
+    type: rgb565
+    transparency: alpha_channel
     resize: 21x21
   - file: mdi:floor-lamp-outline
     id: floor_lamp_icon_off
+    type: rgb565
+    transparency: alpha_channel
     resize: 40x40
   - file: mdi:ceiling-light
     id: ceiling_light_icon
+    type: rgb565
+    transparency: alpha_channel
     resize: 40x40
   - file: mdi:ceiling-light-outline
     id: ceiling_light_icon_off
+    type: rgb565
+    transparency: alpha_channel
     resize: 40x40
   - file: mdi:desk
     id: office_icon
+    type: rgb565
+    transparency: alpha_channel
     resize: 40x40
   - file: mdi:cards-heart
     id: heart_icon
+    type: rgb565
+    transparency: alpha_channel
     resize: 100x100
 
 i2c:

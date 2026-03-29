@@ -16,11 +16,11 @@ esp32:
 
 # Enable logging
 logger:
-  level: NONE
+  level: INFO
 
 # Enable Home Assistant API
 api:
-  password: ""
+  # password: ""
 
 ota:
   - platform: esphome
@@ -53,12 +53,12 @@ web_server:
 #   wakeup_pin_mode: INVERT_WAKEUP
 
 esp32_ble_tracker:
-  on_ble_advertise:
-    - lambda: |-
-        ESP_LOGI("ble_adv", "Found BLE device:");
-        ESP_LOGI("ble_adv", "  Name: %s", x.get_name().c_str());
-        ESP_LOGI("ble_adv", "  MAC address: %s", x.address_str().c_str());
-        ESP_LOGI("ble_adv", "  RSSI: %d", x.get_rssi());
+  # on_ble_advertise:
+    # - lambda: |-
+    #     ESP_LOGI("ble_adv", "Found BLE device:");
+    #     ESP_LOGI("ble_adv", "  Name: %s", x.get_name().c_str());
+    #     ESP_LOGI("ble_adv", "  MAC address: %s", x.address_str().c_str());
+    #     ESP_LOGI("ble_adv", "  RSSI: %d", x.get_rssi());
 
 
 globals:
@@ -161,6 +161,10 @@ sensor:
   device_class: water
   state_class: total_increasing
   icon: "mdi:water"
+  on_value:
+    then:
+      - lambda: |-
+          ESP_LOGI("water", "Main water consumption changed: %.0f L", x);
 
 - platform: template
   id: water_secondary_consumption
@@ -196,16 +200,18 @@ binary_sensor:
     filters:
         - delayed_on_off: 100ms
         - lambda: |-
-            // Only increase when ESP is up for longer than 1 sec
-            // Attempt to solve issue with ghost counts
-            //if (id(watermeter_uptime).state > 1.0) {
+            if (x) {
+              ESP_LOGI("water_pulse", "Pulse detected! Uptime: %.1f s, main=%d, ghost=%s",
+                id(watermeter_uptime).state,
+                id(main_counter_pulses),
+                id(watermeter_uptime).state < 5.0 ? "POSSIBLE GHOST" : "ok");
+            } else {
+              ESP_LOGI("water_pulse", "Pulse END. Uptime: %.1f s", id(watermeter_uptime).state);
+            }
             id(main_counter_pulses) += x;
             id(secondary_counter_pulses) += x;
             id(event_quantity) += x;
             return x;
-            // } else {
-            //   return 0;
-            // }
     on_state:
         - script.execute: publish_states
 

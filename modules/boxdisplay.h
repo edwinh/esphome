@@ -133,7 +133,7 @@ void fourthPage(esphome::display::Display& it) {
   }
 };
 void thirdPage(esphome::display::Display& it) {
-  it.print(60, 80, &esphome::id(font_medium), textColor, "Kusje voor Yoni");
+  it.print(60, 80, &esphome::id(font_medium), textColor, "Testpage");
   it.image(100, 120, &esphome::id(heart_icon), esphome::Color(255, 0, 0));
 };
 

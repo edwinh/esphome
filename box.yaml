@@ -174,7 +174,7 @@ font:
     id: font_small
     size: 15
 
-image:
+image:  
   - file: mdi:volume-off
     id: mute_icon
     type: rgb565
@@ -312,7 +312,7 @@ binary_sensor:
   #   on_release:
   #     - voice_assistant.stop:
   - platform: homeassistant
-    id: door_senor
+    id: door_sensor
     entity_id: binary_sensor.door_sensor
     on_state:
       then:

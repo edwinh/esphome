@@ -88,6 +88,7 @@ globals:
    initial_value: '0'
 
 script:
+# Can be used to set the main counter to actual value
   - id: reset_main_counter
     then:
       - lambda: |-

@@ -212,6 +212,7 @@ binary_sensor:
             id(main_counter_pulses) += x;
             id(secondary_counter_pulses) += x;
             id(event_quantity) += x;
+            ESP_LOGI("water_pulse", "Updated main counter pulses: %d", id(main_counter_pulses));
             return x;
     on_state:
         - script.execute: publish_states
@@ -234,6 +235,11 @@ switch:
     name: "Watermeter restart"
 
 interval:
+  # Log main counter value periodically
+  - interval: 60s
+    then:
+      - lambda: |-
+          ESP_LOGI("water", "Main counter pulses: %d", id(main_counter_pulses));
   # Save the last consumption
   #
   # An event is published when a water flow (>= 1L / 15 seconds) is
